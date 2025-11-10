@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultado do Orçamento | Imobiliária R.M</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="card-container">
+        <h1>Orçamento Gerado - Imobiliária R.M</h1>
+        
+        <h2>Resumo Mensal</h2>
+        
+        <div class="result-info">
+            <p><strong>Tipo de Imóvel:</strong> {{ tipo_imovel }}</p>
+            <p><strong>Valor Base do Aluguel:</strong> R$ {{ "%.2f"|format(aluguel_mensal_bruto) | replace('.', ',') }}</p>
+            
+            {% if valor_adicionais > 0 %}
+                <p style="color:#cccccc;"><strong>(+) Adicionais:</strong> R$ {{ "%.2f"|format(valor_adicionais) | replace('.', ',') }}</p>
+            {% endif %}
+            
+            {% if valor_desconto > 0 %}
+                <p style="color: 	 #cccccc;"><strong>(-) Desconto (5%):</strong> R$ {{ "%.2f"|format(valor_desconto) | replace('.', ',') }}</p>
+            {% else %}
+                 {% if tipo_imovel == 'Apartamento' and not tem_criancas %}
+                     <p style="color:	 #cccccc;">(Não aplicável: Desconto de 5% em Apartamentos para pessoas sem crianças)</p>
+                 {% endif %}
+            {% endif %}
+
+            <hr style="border-color: var(--card-border); margin: 1rem 0;"/>
+            
+            <p style="font-size: 1.2rem;"><strong>ALUGUEL MENSAL ORÇADO:</strong> <strong style="color: #cccccc;">R$ {{ "%.2f"|format(aluguel_mensal_final) | replace('.', ',') }}</strong></p>
+            
+            <hr style="border-color: var(--card-border); margin: 1rem 0;"/>
+
+            <h3>Contrato Imobiliário (R$ {{ "%.2f"|format(valor_contrato) | replace('.', ',') }})</h3>
+            <p><strong>Parcelas do Contrato:</strong> {{ parcelas_contrato }}x</p>
+            <p><strong>Valor da Parcela do Contrato:</strong> R$ {{ "%.2f"|format(parcela_contrato_valor) | replace('.', ',') }}</p>
+            <p style="font-size: 1.2rem; margin-top: 1rem;"><strong>TOTAL MENSAL (1ºs {{ parcelas_contrato }} Meses):</strong> <strong style="color: var(--button-primary);">R$ {{ "%.2f"|format(total_mensal_com_contrato) | replace('.', ',') }}</strong></p>
+        </div>
+        
+        <h2 style="font-size: 1.2rem; margin-top: 2rem;">Resumo Anual (12 Meses)</h2>
+        <table class="price-table" style="margin-top: 1rem;">
+            <thead>
+                <tr>
+                    <th>Mês</th>
+                    <th style="text-align: right;">Total Mensal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in tabela_anual %}
+                    <tr>
+                        <td>Mês {{ item.mes }}</td>
+                        <td style="text-align: right; font-weight: bold; color: {% if item.parcela_contrato > 0 %} var(--button-primary) {% else %} #ffffff {% endif %};">
+                            R$ {{ "%.2f"|format(item.valor_total) | replace('.', ',') }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <hr style="border-color: var(--card-border); margin: 2rem 0;"/>
+
+        <h2 style="font-size: 1.2rem;">Gerar Tabela Anual (CSV)</h2>
+        <form method="POST" action="{{ url_for('download_csv') }}" style="margin-top: 1rem;">
+            <input type="hidden" name="aluguel_mensal_final" value="{{ aluguel_mensal_final }}">
+            <input type="hidden" name="parcela_contrato_valor" value="{{ parcela_contrato_valor }}">
+            
+            <button type="submit" class="button-link">Baixar CSV com 12 Parcelas</button>
+        </form>
+        
+        <a href="{{ url_for('index') }}" class="button-link" style="margin-top: 1rem; background-color: #6c757d;">Novo Orçamento</a>
+
+    </div>
+</body>
+</html>

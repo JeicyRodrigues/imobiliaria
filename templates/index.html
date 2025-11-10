@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orçamento de Aluguel | Imobiliária R.M</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* CSS específico para alternar campos de entrada */
+        #vagas_estudio_fields {
+            display: none;
+        }
+        #garagem_field_estudio {
+            margin-top: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="card-container">
+        <h1>Orçamento de Aluguel - Imobiliária R.M</h1>
+        
+        <form method="POST" action="{{ url_for('orcamento') }}">
+            
+            <div class="form-group">
+                <label for="tipo_imovel">Tipo de Imóvel:</label>
+                <select id="tipo_imovel" name="tipo_imovel" required onchange="toggleFields()">
+                    <option value="" disabled selected>Selecione</option>
+                    <option value="apartamento">Apartamento (R$ 700,00)</option>
+                    <option value="casa">Casa (R$ 900,00)</option>
+                    <option value="estudio">Estúdio (R$ 1.200,00)</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="quartos_field">
+                <label for="quartos">Número de Quartos:</label>
+                <select id="quartos" name="quartos" required>
+                    <option value="1">1 Quarto (Padrão)</option>
+                    <option value="2">2 Quartos (+ R$ 200/250,00)</option>
+                </select>
+            </div>
+
+            <div class="checkbox-group" id="garagem_field_apto_casa">
+                <input type="checkbox" id="garagem" name="garagem">
+                <label for="garagem">Incluir Vaga de Garagem (+ R$ 300,00)</label>
+            </div>
+            
+            <div id="garagem_field_estudio" style="display:none;">
+                 <div class="checkbox-group">
+                    <input type="checkbox" id="garagem_estudio" name="garagem_estudio" onchange="toggleEstudioVagas()">
+                    <label for="garagem_estudio">Incluir 2 Vagas de Estacionamento (+ R$ 250,00)</label>
+                </div>
+                
+                <div class="form-group" id="vagas_estudio_fields">
+                    <label for="vagas_extras_estudio">Vagas Extras (além das 2):</label>
+                    <input type="number" id="vagas_extras_estudio" name="vagas_extras_estudio" min="0" value="0">
+                    <small style="color:rgba(255,255,255,0.7); display:block; margin-top: 0.25rem;">(+ R$ 60,00 por vaga extra)</small>
+                </div>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="criancas" name="criancas">
+                <label for="criancas">Possui crianças?</label>
+                <small style="color:rgba(255,255,255,0.7);">(Marca 'Não' para desconto de 5% em Apartamentos)</small>
+            </div>
+            
+            <hr style="border-color: var(--card-border); margin: 2rem 0;"/>
+
+            <div class="form-group">
+                <label for="parcelas_contrato">Parcelamento do Contrato (R$ 2.000,00):</label>
+                <select id="parcelas_contrato" name="parcelas_contrato" required>
+                    <option value="1">1x de R$ 2.000,00</option>
+                    <option value="2">2x de R$ 1.000,00</option>
+                    <option value="3">3x de R$ 666,67</option>
+                    <option value="4">4x de R$ 500,00</option>
+                    <option value="5">5x de R$ 400,00 (Máximo)</option>
+                </select>
+            </div>
+
+            <button type="submit">Gerar Orçamento</button>
+        </form>
+        
+    </div>
+
+    <script>
+        function toggleFields() {
+            const tipoImovel = document.getElementById('tipo_imovel').value;
+            const quartosField = document.getElementById('quartos_field');
+            const garagemAptoCasaField = document.getElementById('garagem_field_apto_casa');
+            const garagemEstudioField = document.getElementById('garagem_field_estudio');
+            const garagemCheckbox = document.getElementById('garagem'); // Checkbox para Apto/Casa
+
+            // Reseta todos os campos não visíveis
+            document.getElementById('garagem_estudio').checked = false;
+            document.getElementById('vagas_extras_estudio').value = 0;
+            document.getElementById('vagas_estudio_fields').style.display = 'none';
+            garagemCheckbox.checked = false;
+            document.getElementById('quartos').value = '1';
+
+            if (tipoImovel === 'estudio') {
+                // Esconde campos de quartos/garagem padrão, mostra o de estúdio
+                quartosField.style.display = 'none';
+                garagemAptoCasaField.style.display = 'none';
+                garagemEstudioField.style.display = 'block';
+            } else {
+                // Mostra campos de quartos/garagem padrão, esconde o de estúdio
+                quartosField.style.display = 'block';
+                garagemAptoCasaField.style.display = 'flex';
+                garagemEstudioField.style.display = 'none';
+            }
+        }
+        
+        function toggleEstudioVagas() {
+             const garagemEstudioChecked = document.getElementById('garagem_estudio').checked;
+             const vagasEstudioFields = document.getElementById('vagas_estudio_fields');
+             
+             if (garagemEstudioChecked) {
+                vagasEstudioFields.style.display = 'block';
+             } else {
+                vagasEstudioFields.style.display = 'none';
+                document.getElementById('vagas_extras_estudio').value = 0;
+             }
+        }
+
+        // Garante que os campos estão no estado inicial correto
+        document.addEventListener('DOMContentLoaded', toggleFields);
+    </script>
+</body>
+</html>
