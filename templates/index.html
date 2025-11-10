@@ -6,7 +6,7 @@
     <title>Orçamento de Aluguel | Imobiliária R.M</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        /* CSS específico para alternar campos de entrada */
+      
         #vagas_estudio_fields {
             display: none;
         }
@@ -87,9 +87,9 @@
             const quartosField = document.getElementById('quartos_field');
             const garagemAptoCasaField = document.getElementById('garagem_field_apto_casa');
             const garagemEstudioField = document.getElementById('garagem_field_estudio');
-            const garagemCheckbox = document.getElementById('garagem'); // Checkbox para Apto/Casa
+            const garagemCheckbox = document.getElementById('garagem'); 
 
-            // Reseta todos os campos não visíveis
+
             document.getElementById('garagem_estudio').checked = false;
             document.getElementById('vagas_extras_estudio').value = 0;
             document.getElementById('vagas_estudio_fields').style.display = 'none';
@@ -97,12 +97,12 @@
             document.getElementById('quartos').value = '1';
 
             if (tipoImovel === 'estudio') {
-                // Esconde campos de quartos/garagem padrão, mostra o de estúdio
+              
                 quartosField.style.display = 'none';
                 garagemAptoCasaField.style.display = 'none';
                 garagemEstudioField.style.display = 'block';
             } else {
-                // Mostra campos de quartos/garagem padrão, esconde o de estúdio
+                
                 quartosField.style.display = 'block';
                 garagemAptoCasaField.style.display = 'flex';
                 garagemEstudioField.style.display = 'none';
@@ -121,7 +121,7 @@
              }
         }
 
-        // Garante que os campos estão no estado inicial correto
+      
         document.addEventListener('DOMContentLoaded', toggleFields);
     </script>
 </body>
